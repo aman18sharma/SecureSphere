@@ -22,6 +22,5 @@ def get_vulnerability(vuln_id: int, db: Session = Depends(get_db)):
 def get_by_cve_id_vulnerability(cve_id: int, db: Session = Depends(get_db)):
 
     vuln = db.query(Vulnerability).filter(Vulnerability.cve_id == cve_id).first()
-    if not vuln:
-        raise HTTPException(status_code=404, detail="Vulnerability not found")
+
     return vuln

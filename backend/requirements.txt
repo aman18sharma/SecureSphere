@@ -2,7 +2,7 @@ fastapi
 uvicorn
 python-multipart
 python-dotenv
-openai
+openai>=1.0.0
 pydantic
 sqlalchemy
 python-dateutil
