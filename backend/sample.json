@@ -1,0 +1,8 @@
+[
+  {
+    "title": "CVE-2025-41232: Spring Security authorization bypass for method security annotations on private methods",
+    "description": "CWE-693 Protection Mechanism Failure",
+    "severity": "High",
+    "cve_id": "CVE-2025-41232"
+  }
+]

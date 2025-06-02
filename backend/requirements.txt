@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+openai
+pydantic
+sqlalchemy
+python-dateutil
+httpx
+ollama  # Ensure Ollama CLI is installed and model like llama3 is pulled
