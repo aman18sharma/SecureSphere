@@ -24,7 +24,8 @@ const FileUploader = () => {
 
     try {
       const result = await uploadVulnerabilities(file);
-      setMessage(`Successfully uploaded ${result.ids.length} vulnerabilities`);
+      console.log(result)
+      setMessage(result.message);
     } catch (err) {
       setError('Failed to upload file. Please check the format.');
       console.error('Upload error:', err);
