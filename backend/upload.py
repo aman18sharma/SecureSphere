@@ -19,7 +19,17 @@ async def upload_vulnerabilities(
         contents = await file.read()
         vuln_data = json.loads(contents)
         new_vulns = []
-        for item in vuln_data:
+        cve_id = vuln_data['cveMetadata']['cveId']
+        vuln_data = {'title': vuln_data['containers']['cna']['title'],
+                     'description': vuln_data['containers']['cna']['descriptions'][0]['value'],
+                     'severity': vuln_data['containers']['cna']['metrics'][0]['cvssV3_1']['baseSeverity'],
+                     'cve_id': cve_id
+                    }
+
+        with open(f"./uploaded_data/{cve_id}.json", 'w') as file:
+            # Step 2: Dump JSON data into a json file
+            json.dump([vuln_data], file, indent=4)
+        for item in [vuln_data]:
             # assessment = generate_ai_assessment(1, item)
             # print(assessment)
             vuln = Vulnerability(
