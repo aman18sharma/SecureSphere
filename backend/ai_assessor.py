@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import openai
 from openai import OpenAIError, OpenAI  # Added OpenAI class
 from fastapi import HTTPException
 from prompt import response_format_json, prompt_string

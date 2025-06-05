@@ -7,7 +7,7 @@ import httpx
 # Set up logger
 logger = logging.getLogger(__name__)
 
-async def run_ollama_ai(title: str, description: str, severity: str):
+def run_ollama_ai(title: str, description: str, severity: str):
     prompt = (
         "You are a cybersecurity expert analyzing software vulnerabilities. "
         "Analyze the following vulnerability and provide remediation advice:\n\n"
@@ -32,7 +32,7 @@ async def run_ollama_ai(title: str, description: str, severity: str):
         print("ERROR >> ", e)
         return {"error": str(e)}
 
-async def get_ai_assessment(title: str, description: str, severity: str) -> str:
+def get_ai_assessment(title: str, description: str, severity: str) -> str:
     """
     Get AI assessment from OLLAMA server
     """
@@ -58,8 +58,8 @@ async def get_ai_assessment(title: str, description: str, severity: str) -> str:
     }
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(endpoint, json=payload)
+        with httpx.AsyncClient(timeout=60.0) as client:
+            response = client.post(endpoint, json=payload)
             response.raise_for_status()
             data = response.json()
             return data["message"]["content"].strip()

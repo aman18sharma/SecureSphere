@@ -1,10 +1,10 @@
-fastapi
-uvicorn
-python-multipart
-python-dotenv
-openai>=1.0.0
-pydantic
-sqlalchemy
-python-dateutil
-httpx
-ollama  # Ensure Ollama CLI is installed and model like llama3 is pulled
+fastapi==0.109.1
+uvicorn==0.27.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+openai>=1.0.0,<2.0.0  # Latest 1.x version
+pydantic==2.6.1
+sqlalchemy==2.0.25
+python-dateutil==2.8.2
+httpx==0.26.0
+ollama==0.5.1
