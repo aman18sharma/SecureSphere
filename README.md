@@ -1,6 +1,5 @@
 # Vulnerability Management System
-
-![System Architecture](architecture-diagram.png) <!-- Optional: Add a diagram if available -->
+ <!-- Optional: Add a diagram if available -->
 
 A full-stack application for tracking, analyzing, and assessing software vulnerabilities with AI-powered analysis.
 
