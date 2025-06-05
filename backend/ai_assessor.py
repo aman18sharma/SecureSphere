@@ -1,37 +1,60 @@
+"""AI Assessment generator using OpenAI GPT-4o."""
+
 import os
+import logging
 from dotenv import load_dotenv
-from openai import OpenAIError, OpenAI  # Added OpenAI class
+from openai import OpenAI, OpenAIError
 from fastapi import HTTPException
+
 from prompt import response_format_json, prompt_string
+
+# Load environment variables
 load_dotenv()
 
-def generate_ai_assessment(vuln):
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def generate_ai_assessment(vuln) -> str:
     """
-    Generates an AI assessment for the given vulnerability object.
+    Generate an AI assessment for the given vulnerability.
+
+    Args:
+        vuln: A Pydantic or ORM vulnerability object.
+
+    Returns:
+        str: The AI-generated assessment content.
+
+    Raises:
+        HTTPException: For OpenAI or unexpected errors.
     """
-    client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))  # Create OpenAI client instance
     try:
-        # Combine system messages for better efficiency
+        client = OpenAI(api_key=os.getenv("OPEN_API_KEY"))
+
         system_content = (
             f"I want you to always reply in the following JSON format: {response_format_json()}\n\n"
             f"{prompt_string()}"
         )
+
         response = client.chat.completions.create(
             model="gpt-4o",
-            response_format={"type": "json_object"},  # Enforce JSON response
+            response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_content},
-                {"role": "user", "content": str(vuln)}  # Properly structured user input
+                {"role": "user", "content": str(vuln)}
             ]
         )
-        # Extract content from response
-        content = response.choices[0].message.content.strip()
-        # print(content)  # Print the actual content instead of full response
-        return content
 
-    except OpenAIError as e:
-        print("OpenAI Error:", e)
-        return HTTPException(status_code=500, detail=f"OpenAI Error: {str(e)}")
-    except Exception as e:
-        print("Unexpected Error:", e)
-        return HTTPException(status_code=500, detail=f"Unexpected error during AI assessment: {str(e)}")
+        return response.choices[0].message.content.strip()
+
+    except OpenAIError as exc:
+        logger.error("OpenAI error occurred: %s", exc)
+        raise HTTPException(status_code=500, detail=f"OpenAI API error: {exc}") from exc
+
+    except Exception as exc:
+        logger.exception("Unexpected error during AI assessment")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error during AI assessment: {exc}"
+        ) from exc
