@@ -1,7 +1,31 @@
 # Vulnerability Management System
+ <!-- Optional: Add a diagram if available -->
+# SecureSphere Architecture
 
-![System Architecture](architecture-diagram.png) <!-- Optional: Add a diagram if available -->
-
+```mermaid
+graph TD
+    A[Frontend] -->|API Calls| B[Backend]
+    B -->|HTTP| C[OLLAMA AI]
+    B -->|CRUD| D[(SQLite Database)]
+    A -->|Static Assets| E[CDN]
+    
+    subgraph Frontend
+        A --> F[React]
+        A --> G[Vite]
+        A --> H[Chart.js]
+    end
+    
+    subgraph Backend
+        B --> I[FastAPI]
+        B --> J[SQLAlchemy]
+        B --> K[Pydantic]
+    end
+    
+    subgraph AI Layer
+        C --> L[LLAMA3]
+        C --> M[Mistral]
+    end
+```
 A full-stack application for tracking, analyzing, and assessing software vulnerabilities with AI-powered analysis.
 
 ## Table of Contents
