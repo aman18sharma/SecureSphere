@@ -26,6 +26,7 @@ class Vulnerability(VulnerabilityBase):
     id: int
     date_reported: datetime
     ai_assessment: Optional[str] = None
+    ai_ollama_assessment: Optional[str] = None
 
     class Config:
         from_attributes = True

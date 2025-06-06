@@ -3,15 +3,15 @@
 import os
 import subprocess
 import logging
-from typing import Union, Dict
 import httpx
+from prompt import prompt_string
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def run_ollama_ai(title: str, description: str, severity: str) -> Union[str, Dict[str, str]]:
+def run_ollama_ai(vuln_data):
     """
     Run a local Ollama model via subprocess for AI assessment.
 
@@ -23,17 +23,19 @@ def run_ollama_ai(title: str, description: str, severity: str) -> Union[str, Dic
     Returns:
         str | dict: Raw output from the model or error message.
     """
+    print("TYPE >>>> ", type(vuln_data))
     prompt = (
         "You are a cybersecurity expert analyzing software vulnerabilities. "
         "Analyze the following vulnerability and provide remediation advice:\n\n"
-        f"Title: {title}\n"
-        f"Description: {description}\n"
-        f"Severity: {severity}"
+        f"{vuln_data.encode('utf-8')}"
     )
+
+    full_prompt = f"{prompt_string}\n\n{vuln_data}"
 
     try:
         result = subprocess.run(
-            ['ollama', 'run', 'llama3', prompt],
+            ['ollama', 'run', 'llama3.2'],
+            input=full_prompt,
             capture_output=True,
             text=True,
             timeout=120,
@@ -44,7 +46,7 @@ def run_ollama_ai(title: str, description: str, severity: str) -> Union[str, Dic
             logger.warning("Empty response from Ollama subprocess.")
             return {"error": "Empty response from Ollama."}
 
-        logger.info("Ollama subprocess assessment successful.")
+        logger.info("Ollama subprocess assessment successful. %s", output)
         return output
 
     except subprocess.TimeoutExpired as exc:

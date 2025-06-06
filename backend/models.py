@@ -29,3 +29,4 @@ class Vulnerability(Base):
     cve_id = Column(String(50), nullable=True)
     date_reported = Column(DateTime, default=datetime.utcnow)
     ai_assessment = Column(Text, nullable=True)
+    ai_ollama_assessment = Column(Text, nullable=True)

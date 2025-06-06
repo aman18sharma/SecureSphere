@@ -29,3 +29,11 @@ export const runAIAssessment = async (id) => {
 
   return response.json();
 };
+
+export const runOllamaAIAssessment = async (id) => {
+  const response = await fetch(`${API_URL}/vulnerabilities/${id}/assess_by_ollama`, {
+    method: "POST",
+  });
+
+  return response.json();
+};
