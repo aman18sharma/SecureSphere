@@ -23,6 +23,24 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pylint
 
-      - name: Analyse the code with Pylint
+      - name: Run Pylint and check score
         run: |
-          pylint $(git ls-files 'backend/**/*.py')
+          echo "Running Pylint on backend/**/*.py"
+          pylint $(git ls-files 'backend/**/*.py') | tee pylint-report.txt
+
+          # Extract score from last 10 lines
+          SCORE=$(tail -n 10 pylint-report.txt | grep "rated at" | sed -E "s/.* ([0-9]+\.[0-9]+)\/10.*/\1/")
+          echo "Pylint score: $SCORE"
+
+          # Set minimum required score
+          REQUIRED_SCORE=5.0
+
+          # Compare scores using bc
+          RESULT=$(echo "$SCORE >= $REQUIRED_SCORE" | bc -l)
+
+          if [ "$RESULT" -ne 1 ]; then
+            echo "❌ Pylint score too low: $SCORE < $REQUIRED_SCORE"
+            exit 1
+          else
+            echo "✅ Pylint score is acceptable: $SCORE >= $REQUIRED_SCORE"
+          fi
