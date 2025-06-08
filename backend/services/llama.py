@@ -4,6 +4,7 @@ import os
 import subprocess
 import logging
 import httpx
+from .llama_api import query_ollama
 from prompt import prompt_string
 
 # Set up logger
@@ -23,31 +24,26 @@ def run_ollama_ai(vuln_data):
     Returns:
         str | dict: Raw output from the model or error message.
     """
-    print("TYPE >>>> ", type(vuln_data))
-    prompt = (
-        "You are a cybersecurity expert analyzing software vulnerabilities. "
-        "Analyze the following vulnerability and provide remediation advice:\n\n"
-        f"{vuln_data.encode('utf-8')}"
-    )
 
     full_prompt = f"{prompt_string}\n\n{vuln_data}"
 
     try:
-        result = subprocess.run(
-            ['ollama', 'run', 'llama3.2'],
-            input=full_prompt,
-            capture_output=True,
-            text=True,
-            timeout=120,
-            check=True
-        )
-        output = result.stdout.strip()
-        if not output:
-            logger.warning("Empty response from Ollama subprocess.")
-            return {"error": "Empty response from Ollama."}
+        resp = query_ollama(full_prompt)
+        # result = subprocess.run(
+        #     ['ollama', 'run', 'llama3.2:latest'],
+        #     input=full_prompt,
+        #     capture_output=True,
+        #     text=True,
+        #     timeout=120,
+        #     check=True
+        # )
+        # output = result.stdout.strip()
+        # if not output:
+        #     logger.warning("Empty response from Ollama subprocess.")
+        #     return {"error": "Empty response from Ollama."}
 
-        logger.info("Ollama subprocess assessment successful. %s", output)
-        return output
+        # logger.info("Ollama subprocess assessment successful. %s", output)
+        return resp['response']
 
     except subprocess.TimeoutExpired as exc:
         logger.error("Ollama subprocess timed out: %s", exc)

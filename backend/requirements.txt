@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 python-multipart
+requests
 python-dotenv
 openai>=1.0.0,<2.0.0  # Latest 1.x version
 pydantic

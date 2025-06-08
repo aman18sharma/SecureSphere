@@ -6,6 +6,7 @@ from database import get_db
 from models import Vulnerability
 from vulnerabilities import get_by_cve_id_vulnerability
 from ai_assessor import generate_ai_assessment
+from services.llama import run_ollama_ai
 import os
 
 router = APIRouter()
@@ -21,6 +22,7 @@ async def upload_vulnerabilities(
     db: Session = Depends(get_db)
 ):
     try:
+        print("FILE:", file.filename)
         contents = await file.read()
         vuln_data_raw = json.loads(contents)
 
@@ -41,8 +43,10 @@ async def upload_vulnerabilities(
             'cve_id': cve_id
         }
 
-        assessment_str = generate_ai_assessment(vuln_data)
-        assessment_json = json.loads(assessment_str)
+        # assessment_str = generate_ai_assessment(contents)
+        ollama_str = run_ollama_ai(contents)
+        # assessment_json = json.loads(assessment_str)
+        print(ollama_str)
 
         # Save uploaded JSON file for record keeping
         with open(os.path.join(UPLOAD_DIR, f"{cve_id}.json"), 'w') as f:
@@ -51,9 +55,10 @@ async def upload_vulnerabilities(
         vuln = Vulnerability(
             title=vuln_data['title'],
             description=vuln_data['description'],
-            severity=assessment_json.get('complex_findings', {}).get('Severity', 'Unknown'),
+            severity="High",#assessment_json.get('complex_findings', {}).get('severity', 'Unknown'),
             cve_id=cve_id,
-            ai_assessment=assessment_str,
+            # ai_assessment=assessment_str,
+            ai_ollama_assessment=ollama_str,
             date_reported=datetime.utcnow()
         )
         db.add(vuln)
