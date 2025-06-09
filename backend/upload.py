@@ -51,7 +51,7 @@ async def upload_vulnerabilities(
         vuln = Vulnerability(
             title=vuln_data['title'],
             description=vuln_data['description'],
-            severity=assessment_json.get('complex_findings', {}).get('Severity', 'Unknown'),
+            severity=assessment_json.get('complex_findings', {}).get('severity', 'Unknown'),
             cve_id=cve_id,
             ai_assessment=assessment_str,
             date_reported=datetime.utcnow()
