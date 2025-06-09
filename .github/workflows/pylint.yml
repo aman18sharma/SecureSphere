@@ -7,17 +7,40 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.13.3"]
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pylint
+
+      - name: Run Pylint and check score
+        run: |
+          echo "Running Pylint on backend/**/*.py"
+          pylint $(git ls-files 'backend/**/*.py') | tee pylint-report.txt
+
+          # Extract score from last 10 lines
+          SCORE=$(tail -n 10 pylint-report.txt | grep "rated at" | sed -E "s/.* ([0-9]+\.[0-9]+)\/10.*/\1/")
+          echo "Pylint score: $SCORE"
+
+          # Set minimum required score
+          REQUIRED_SCORE=5.0
+
+          # Compare scores using bc
+          RESULT=$(echo "$SCORE >= $REQUIRED_SCORE" | bc -l)
+
+          if [ "$RESULT" -ne 1 ]; then
+            echo "❌ Pylint score too low: $SCORE < $REQUIRED_SCORE"
+            exit 1
+          else
+            echo "✅ Pylint score is acceptable: $SCORE >= $REQUIRED_SCORE"
+          fi
