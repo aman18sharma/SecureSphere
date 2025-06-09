@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --color-critical: #dc0000;
   --color-high: #f35050;
   --color-medium: #ffd166;
@@ -66,7 +66,6 @@ footer {
   color: #6c757d;
 }
 
-/* Table Styles */
 .vulnerability-table {
   background-color: var(--color-card);
   border-radius: 8px;
@@ -129,7 +128,7 @@ th {
   text-decoration: underline;
 }
 
-/* Detail View */
+
 .vulnerability-detail {
   background-color: var(--color-card);
   border-radius: 8px;
@@ -192,7 +191,6 @@ th {
   cursor: not-allowed;
 }
 
-/* File Uploader */
 .file-uploader {
   background-color: var(--color-card);
   border-radius: 8px;
@@ -262,4 +260,333 @@ th {
   text-align: center;
   padding: 40px;
   font-size: 1.2rem;
+} */
+
+/* _________________________ */
+
+:root {
+  --color-critical: #ff0054;
+  --color-high: #ff6b6b;
+  --color-medium: #ffd166;
+  --color-low: #06d6a0;
+  --color-info: #00b4d8;
+  --color-background: #121212;
+  --color-card: #1e1e1e;
+  --color-text: #e0e0e0;
+  --color-border: #333;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  background-color: var(--color-card);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: var(--color-info);
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  color: #6c757d;
+}
+
+/* Table Styles */
+.vulnerability-table {
+  background-color: var(--color-card);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+th {
+  background-color: #333;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.severity-high {
+  background-color: var(--color-high);
+  color: white;
+}
+
+.severity-critical {
+  background-color: var(--color-critical);
+  color: white;
+}
+
+.severity-medium {
+  background-color: var(--color-medium);
+  color: #333;
+}
+
+.severity-low {
+  background-color: var(--color-low);
+  color: #333;
+}
+
+.view-link {
+  color: var(--color-info);
+  text-decoration: none;
+}
+
+.view-link:hover {
+  text-decoration: underline;
+}
+
+/* Detail View */
+.vulnerability-detail {
+  background-color: var(--color-card);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--color-info);
+  text-decoration: none;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.detail-section {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.detail-section h2 {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-info);
+}
+
+.assessment-result {
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid var(--color-info);
+  white-space: pre-wrap;
+}
+
+.ai-button {
+  background-color: var(--color-info);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.ai-button:hover {
+  background-color: #0077b6;
+}
+
+.ai-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* File Uploader */
+.file-uploader {
+  background-color: var(--color-card);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.file-input {
+  margin: 20px 0;
+}
+
+.upload-button {
+  background-color: var(--color-info);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.upload-button:hover {
+  background-color: #0077b6;
+}
+
+.upload-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.format-info {
+  margin-top: 30px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.format-info pre {
+  background-color: #333;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: #28a745;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #1e1e1e;
+  border-radius: 4px;
+}
+
+.error-message {
+  color: #dc3545;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #1e1e1e;
+  border-radius: 4px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: var(--color-info);
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+.summary-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background-color: var(--color-card);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  flex: 1;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.summary-card:last-child {
+  margin-right: 0;
+}
+
+.summary-card h2 {
+  color: var(--color-info);
+  margin-bottom: 10px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  color: var(--color-text);
+}
+
+.vulnerability-table {
+  background-color: var(--color-card);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.toggle-description {
+  background: none;
+  border: none;
+  color: var(--color-info);
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.toggle-description:hover {
+  text-decoration: underline;
 }
