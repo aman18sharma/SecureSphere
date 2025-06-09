@@ -40,8 +40,8 @@ async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict
     try:
         vuln_data = schemas.VulnerabilityBase.model_validate(vuln).model_dump_json()
 
-        content = llama.run_ollama_ai(vuln_data)
-        # content = response.choices[0].message.content.strip()
+        response = llama.run_ollama_ai(vuln_data)
+        content = response.choices[0].message.content.strip()
         vuln.ai_ollama_assessment = content
         print(content)
         db.commit()
