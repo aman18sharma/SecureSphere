@@ -53,6 +53,7 @@ def subprocess_ollama_ai(content):
     except subprocess.CalledProcessError as exc:
         logger.error("Ollama subprocess failed: %s", exc)
         return {"error": f"Ollama subprocess error: {exc}"}
+    # pylint: disable=broad-exception-caught
     except Exception as exc:
         logger.exception("Unexpected error in Ollama subprocess.")
         return {"error": str(exc)}

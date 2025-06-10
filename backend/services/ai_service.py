@@ -39,7 +39,7 @@ def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict[str, 
 
     try:
         vuln_data = VulnerabilityBase.from_orm(vuln).json()
-
+        # pylint: disable=no-member
         response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
