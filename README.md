@@ -1,4 +1,6 @@
 # Vulnerability Management System
+
+![Lint with pylint](https://github.com/aman18sharma/SecureSphere/actions/workflows/pylint.yml/badge.svg) ![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Python%20%7C%20JavaScript%20%7C%20CSS%20%7C%20HTML-blue)
  <!-- Optional: Add a diagram if available -->
 # SecureSphere Architecture
 
