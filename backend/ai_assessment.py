@@ -2,7 +2,6 @@
 
 import os
 import logging
-import pdb
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from openai import OpenAI
@@ -20,7 +19,7 @@ router = APIRouter()
 
 
 @router.post("/{vuln_id}/assess_by_ollama")
-async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict:
+async def run_ollama_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict:
     """
     Run an AI assessment on a specific vulnerability using OpenAI's GPT-4o model.
 
@@ -50,7 +49,7 @@ async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict
 
     except Exception as exc:
         logger.exception("Error during AI assessment")
-        raise HTTPException(status_code=500, detail=f"AI assessment failed: {exc}")
+        raise HTTPException(status_code=500, detail=f"AI assessment failed: {exc}") from exc
 
 @router.post("/{vuln_id}/assess")
 async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict:
@@ -99,4 +98,4 @@ async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict
 
     except Exception as exc:
         logger.exception("Error during AI assessment")
-        raise HTTPException(status_code=500, detail=f"AI assessment failed: {exc}")
+        raise HTTPException(status_code=500, detail=f"AI assessment failed: {exc}") from exc

@@ -1,14 +1,14 @@
+"""File upload functionality and run AI"""
 import os
 import json
-import pdb
+from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
-from datetime import datetime
 from database import get_db
 from models import Vulnerability
 from ai_assessor import generate_ai_assessment
 from vulnerabilities import get_by_cve_id_vulnerability
-from services.llama import api_ollama_ai, subprocess_ollama_ai
+from services.llama import api_ollama_ai
 
 router = APIRouter()
 
@@ -22,6 +22,7 @@ async def upload_vulnerabilities(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
+    """Upload vulnerabilities for assesment from AI"""
     try:
         print("FILE:", file)
         contents = await file.read()
@@ -42,11 +43,11 @@ async def upload_vulnerabilities(
         ollama_str = api_ollama_ai(vuln_data_raw)
         ollama_json = json.loads(ollama_str['response'])
         open_api_json = json.loads(assessment_str)
-        print("OLLAMA RESP", ollama_json)
-        print("OPEN AI RESP", open_api_json)
 
         # Save uploaded JSON file for record keeping
-        with open(os.path.join(UPLOAD_DIR, f"{(ollama_json.get('cve_id') or open_api_json.get('cve_id'))}.json"), 'w') as f:
+        with open(os.path.join(UPLOAD_DIR,
+                               f"{(ollama_json.get('cve_id') or open_api_json.get('cve_id'))}.json"
+                               ), 'w', encoding='utf-8') as f:
             json.dump(vuln_data_raw, f, indent=4)
 
         vuln = Vulnerability(
@@ -66,12 +67,12 @@ async def upload_vulnerabilities(
             "ids": [str(vuln.id)]
         }
 
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as exc:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Invalid JSON file uploaded")
+        raise HTTPException(status_code=400, detail=f"Invalid JSON file uploaded {exc}") from exc
     except HTTPException:
         # Propagate HTTPExceptions as is
         raise
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}") from e

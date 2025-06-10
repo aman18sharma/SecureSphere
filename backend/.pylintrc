@@ -1,0 +1,14 @@
+[MASTER]
+ignore=.venv
+
+[MESSAGES CONTROL]
+disable=
+    no-member,
+    line-too-long,
+    too-few-public-methods,
+    broad-exception-caught,
+    duplicate-code,
+    inconsistent-return-statements
+
+[FORMAT]
+max-line-length=100

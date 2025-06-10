@@ -59,6 +59,17 @@ def subprocess_ollama_ai(content):
 
 
 def api_ollama_ai(content, model="llama3.2:latest", timeout=600):
+    """
+        Run a local Ollama model via API for AI assessment.
+
+        Args:
+            content
+            model
+            timeout
+
+        Returns:
+            str | dict: Raw output from the model or error message.
+    """
     url = "http://localhost:11434/api/generate"
     headers = {
         "Content-Type": "application/json",

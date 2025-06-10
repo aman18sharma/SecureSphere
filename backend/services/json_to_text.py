@@ -1,4 +1,4 @@
-import pdb
+"""Parse Json to String"""
 import json
 import re
 
@@ -27,6 +27,6 @@ def extract_json_from_text(text: str) -> str:
         return json_str
 
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON format: {e}")
+        raise ValueError(f"Invalid JSON format: {e}") from e
     except Exception as e:
-        raise ValueError(f"Error extracting JSON: {e}")
+        raise ValueError(f"Error extracting JSON: {e}") from e

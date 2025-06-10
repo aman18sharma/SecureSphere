@@ -50,7 +50,8 @@ const FileUploader = () => {
         console.log("Vulnerability already exists");
         navigate(`/vulnerability/${result?.ids[0]}`);
       } else {
-        // runOllamaAIAssessment(result?.ids[0]);
+        await runOllamaAIAssessment(result?.ids[0]);
+        navigate(`/vulnerability/${result?.ids[0]}`);
       }
     } catch (err) {
       setError("Failed to upload file. Please check the format.");
