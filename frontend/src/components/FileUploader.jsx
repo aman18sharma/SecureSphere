@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { uploadVulnerabilities } from "../services/api";
+import { uploadVulnerabilities, runOllamaAIAssessment } from "../services/api";
 
 const FileUploader = () => {
   const [file, setFile] = useState(null);
@@ -45,7 +45,8 @@ const FileUploader = () => {
     try {
       const result = await uploadVulnerabilities(file);
       console.log(result);
-      setMessage(result.message);
+      setMessage(`${result?.message}, Ollama Llama3 assesment in progress.`);
+      runOllamaAIAssessment(result?.ids[0]);
     } catch (err) {
       setError("Failed to upload file. Please check the format.");
       console.error("Upload error:", err);
@@ -85,21 +86,6 @@ const FileUploader = () => {
           <pre>{fileContent}</pre>
         </div>
       )}
-
-      <div className="format-info">
-        <h4>Expected JSON Format:</h4>
-        <pre>
-          {`[
-  {
-    "title": "SQL Injection",
-    "description": "Vulnerability allows SQL injection...",
-    "severity": "High",
-    "cve_id": "CVE-2023-12345"
-  },
-  ...
-]`}
-        </pre>
-      </div>
     </div>
   );
 };
