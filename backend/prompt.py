@@ -27,7 +27,7 @@ If vulnerabilities are found, provide:
 - Include references to public advisories or sources.
 - If no issues are found, explain why the data is secure.
 
-Return the results in a well-structured JSON format containing summary, vulnerabilities, score, complex_findings, and references.
+Return the results in a well-structured JSON format containing cve_id, title, description, severity, cvss, summary, vulnerabilities, score, complex_findings, and references.
 """
 
 
@@ -38,32 +38,41 @@ def response_format_json() -> dict:
     This ensures consistent structure for parsing and UI rendering.
     """
     return {
+        "cve_id": "",
+        "title": "",
+        "description": "",
         "summary": "",
+        "severity": "",
+        "cvss_score": "",
+        "technical_explanation": "",
         "vulnerabilities": [
             {
                 "field_key": "",
                 "vulnerability_type": "",
-                "severity": "",
                 "justification": "",
+                "severity": "",
                 "recommended_fix": "",
                 "reference_standard": "",
                 "related_context": ""
             }
         ],
-        "score": "",
         "complex_findings": {
             "affected_software": "",
             "weakness": "",
-            "severity": "",
             "potential_mitigations": [
                 ""
             ],
             "related_attack_patterns": [
-                ""
+                "",
             ]
         },
         "references": [
             ""
-        ],
-        "technical_explanation": ""
+        ]
     }
+
+
+def ollama_prompt() -> str:
+    return """
+            You are a senior security analyst. Carefully review the following input (which may be a dictionary, JSON object, or unstructured text) for any potential security vulnerabilities, misconfigurations, or exposures.
+            Return the results always in a consistent well-structured JSON format containing cve_id, title, description, severity, cvss_score,technical_explanation, summary, vulnerabilities, score, complex_findings, and references"""

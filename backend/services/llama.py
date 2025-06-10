@@ -1,17 +1,18 @@
 """AI Assessment using Ollama (via subprocess and HTTP API)."""
-
-import os
+import pdb
+import json
 import subprocess
 import logging
-import httpx
-from prompt import prompt_string
+import requests
+from services.json_to_text import extract_json_from_text
+from prompt import prompt_string, response_format_json, ollama_prompt
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def run_ollama_ai(vuln_data):
+def subprocess_ollama_ai(content):
     """
     Run a local Ollama model via subprocess for AI assessment.
 
@@ -23,14 +24,11 @@ def run_ollama_ai(vuln_data):
     Returns:
         str | dict: Raw output from the model or error message.
     """
-    print("TYPE >>>> ", type(vuln_data))
-    prompt = (
-        "You are a cybersecurity expert analyzing software vulnerabilities. "
-        "Analyze the following vulnerability and provide remediation advice:\n\n"
-        f"{vuln_data.encode('utf-8')}"
-    )
 
-    full_prompt = f"{prompt_string}\n\n{vuln_data}"
+    full_prompt = (
+        f"{ollama_prompt()}\n```json\n{response_format_json()}```\n\n"
+        f"{prompt_string()}\n```json\n{content}\n```"
+    )
 
     try:
         result = subprocess.run(
@@ -60,54 +58,40 @@ def run_ollama_ai(vuln_data):
         return {"error": str(exc)}
 
 
-def get_ai_assessment(title: str, description: str, severity: str) -> str:
-    """
-    Get AI assessment from Ollama's HTTP API.
+def api_ollama_ai(content, model="llama3.2:latest", timeout=600):
+    url = "http://localhost:11434/api/generate"
+    headers = {
+        "Content-Type": "application/json",
+    }
 
-    Args:
-        title (str): Vulnerability title.
-        description (str): Vulnerability description.
-        severity (str): Vulnerability severity.
-
-    Returns:
-        str: Assessment string or error message.
-    """
-    ollama_host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    endpoint = f"{ollama_host}/api/chat"
-
-    prompt = (
-        "You are a cybersecurity expert analyzing software vulnerabilities. "
-        "Analyze the following vulnerability and provide remediation advice:\n\n"
-        f"Title: {title}\n"
-        f"Description: {description}\n"
-        f"Severity: {severity}"
+    full_prompt = (
+        f"{ollama_prompt()}\n```json\n{response_format_json()}```\n\n"
+        f"{prompt_string()}\n```json\n{content}\n```"
     )
-
-    payload = {
-        "model": os.getenv("OLLAMA_MODEL", "llama3"),
-        "messages": [
-            {"role": "system", "content": "You are a cybersecurity expert."},
-            {"role": "user", "content": prompt}
-        ],
-        "stream": False,
-        "options": {"temperature": 0.3}
+    data = {
+        "model": model,
+        "prompt": full_prompt,
+        "stream": False  # Set to True if you want streaming response
     }
 
     try:
-        response = httpx.post(endpoint, json=payload, timeout=60.0)
-        response.raise_for_status()
-        data = response.json()
-        return data["message"]["content"].strip()
+        response = requests.post(
+            url,
+            headers=headers,
+            data=json.dumps(data),
+            timeout=timeout
+        )
+        response.raise_for_status()  # Raises exception for 4XX/5XX errors
 
-    except httpx.HTTPStatusError as exc:
-        logger.error("HTTP error from Ollama: %s", exc)
-        return f"HTTP error from Ollama: {exc}"
-    except httpx.RequestError as exc:
-        logger.error("Request failed: %s", exc)
-        return f"Request failed: {exc}"
-    except KeyError:
-        logger.error("Unexpected response format from Ollama.")
-        return "Unexpected response format from Ollama."
-    except Exception as exc:
-        logger.exception("Unexpected error in get_ai_assessment.")
-        return f"AI assessment failed: {exc}"
+        # Parse the response
+        result = response.json()
+        resp = extract_json_from_text(result.get("response", ""))
+        return {
+            "response": resp
+        }
+
+    except requests.exceptions.RequestException as e:
+        return {
+            "error": str(e),
+            "status_code": getattr(e.response, 'status_code', None)
+        }

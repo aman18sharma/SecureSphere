@@ -2,11 +2,11 @@
 
 import os
 import logging
-
+import pdb
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from openai import OpenAI
-from services import llama
+from services.llama import api_ollama_ai
 from database import get_db
 from models import Vulnerability
 from prompt import prompt_string, response_format_json
@@ -40,10 +40,9 @@ async def run_ai_assessment(vuln_id: int, db: Session = Depends(get_db)) -> dict
     try:
         vuln_data = schemas.VulnerabilityBase.model_validate(vuln).model_dump_json()
 
-        response = llama.run_ollama_ai(vuln_data)
-        content = response.choices[0].message.content.strip()
-        vuln.ai_ollama_assessment = content
-        print(content)
+        content = api_ollama_ai(vuln_data)
+        vuln.ai_ollama_assessment = content['response']
+        print(['response'])
         db.commit()
 
         logger.info("AI assessment completed for vulnerability ID %d", vuln_id)

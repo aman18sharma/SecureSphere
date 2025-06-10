@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # SQLite database URL
-SQLALCHEMY_DATABASE_URL = "sqlite:///./vulnerability_new.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./vulnerability21.db"
 
 # Create SQLAlchemy engine
 engine = create_engine(
