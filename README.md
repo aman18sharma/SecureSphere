@@ -8,19 +8,19 @@ graph TD
     B -->|HTTP| C[OLLAMA AI]
     B -->|CRUD| D[(SQLite Database)]
     A -->|Static Assets| E[CDN]
-    
+
     subgraph Frontend
         A --> F[React]
         A --> G[Vite]
         A --> H[Chart.js]
     end
-    
+
     subgraph Backend
         B --> I[FastAPI]
         B --> J[SQLAlchemy]
         B --> K[Pydantic]
     end
-    
+
     subgraph AI Layer
         C --> L[LLAMA3]
         C --> M[Mistral]
@@ -30,7 +30,7 @@ A full-stack application for tracking, analyzing, and assessing software vulnera
 
 ## Table of Contents
 - [Features](#features)
-- [Tech Stack](#tech-stack) 
+- [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
@@ -99,6 +99,8 @@ source venv/bin/activate
 .\venv\Scripts\activate
 
 pip install -r requirements.txt
+
+uvicorn main:fast_app
 
 ```
 ## Frontend Setup

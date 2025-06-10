@@ -1,9 +1,10 @@
-import os
+"""Indentify the content  of the file"""
 import json
 import re
 
 def identify_file_content(file_content):
-    print(f"Content of the file:\n")
+    """Indentify the content  of the file"""
+    print("Content of the file:\n")
     print(file_content)
     print("\n")
 
@@ -12,10 +13,9 @@ def identify_file_content(file_content):
     if file_type:
         print(f"The file is identified as: {file_type}")
         return file_type
-    else:
-        print("The file type could not be determined.")
 
 def identify_type(content):
+    """Indentify the type  of the file"""
     # Check for JSON
     if is_json(content):
         return 'json'
@@ -50,6 +50,7 @@ def identify_type(content):
     return None
 
 def is_json(content):
+    """the content is json or not"""
     try:
         json.loads(content)
         return True
@@ -57,32 +58,35 @@ def is_json(content):
         return False
 
 def is_shell(content):
+    """the content is shell or not"""
     return content.startswith("#!")  # Check for shebang
 
 def is_config(content):
+    """the content is config or not"""
     # Basic check for key-value pairs
     return bool(re.search(r'^\s*\w+\s*=\s*.*$', content, re.MULTILINE))
 
 def is_log(content):
+    """the content is log or not"""
     # Basic check for timestamps in logs (e.g., YYYY-MM-DD or similar)
     return bool(re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', content))
 
 def is_code(content):
+    """the content is code or not"""
     # Basic check for common programming syntax (e.g., function definitions)
     return bool(re.search(r'\bdef\b|\bclass\b|\bimport\b', content))
 
 def is_reasoning(content):
-    # Check for keywords commonly associated with reasoning
+    """ Check for keywords commonly associated with reasoning """
     keywords = ['because', 'therefore', 'thus', 'hence']
     return any(keyword in content.lower() for keyword in keywords)
 
 def is_threat(content):
-    # Check for keywords commonly associated with threats
+    """ Check for keywords commonly associated with threats """
     keywords = ['vulnerability', 'exploit', 'attack', 'breach']
     return any(keyword in content.lower() for keyword in keywords)
 
 def is_owasp(content):
-    # Check for OWASP-related keywords
+    """Check for OWASP-related keywords"""
     keywords = ['OWASP', 'Top Ten', 'vulnerability', 'security']
     return any(keyword in content for keyword in keywords)
-  

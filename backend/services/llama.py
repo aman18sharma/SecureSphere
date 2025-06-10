@@ -4,8 +4,8 @@ import json
 import subprocess
 import logging
 import requests
-from services.json_to_text import extract_json_from_text
 from prompt import prompt_string, response_format_json, ollama_prompt
+from .json_to_text import extract_json_from_text
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
@@ -53,12 +53,24 @@ def subprocess_ollama_ai(content):
     except subprocess.CalledProcessError as exc:
         logger.error("Ollama subprocess failed: %s", exc)
         return {"error": f"Ollama subprocess error: {exc}"}
+    # pylint: disable=broad-exception-caught
     except Exception as exc:
         logger.exception("Unexpected error in Ollama subprocess.")
         return {"error": str(exc)}
 
 
 def api_ollama_ai(content, model="llama3.2:latest", timeout=600):
+    """
+        Run a local Ollama model via API for AI assessment.
+
+        Args:
+            content
+            model
+            timeout
+
+        Returns:
+            str | dict: Raw output from the model or error message.
+    """
     url = "http://localhost:11434/api/generate"
     headers = {
         "Content-Type": "application/json",

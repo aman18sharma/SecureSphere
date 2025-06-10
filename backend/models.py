@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime
 
 from database import Base
 
-
+# pylint: disable=too-few-public-methods
 class Vulnerability(Base):
     """
     ORM model for storing software vulnerability details.

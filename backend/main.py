@@ -39,8 +39,9 @@ def create_app() -> FastAPI:
     return app
 
 
-app = create_app()
+fast_app = create_app()
 
 # Entry point for running with `python main.py`
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    # run with command uvicorn main:fast_app
+    uvicorn.run(fast_app, host="0.0.0.0", port=8000, reload=True)

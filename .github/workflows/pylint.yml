@@ -33,7 +33,7 @@ jobs:
           echo "Pylint score: $SCORE"
 
           # Set minimum required score
-          REQUIRED_SCORE=5.0
+          REQUIRED_SCORE=9.85
 
           # Compare scores using bc
           RESULT=$(echo "$SCORE >= $REQUIRED_SCORE" | bc -l)
