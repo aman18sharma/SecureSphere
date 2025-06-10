@@ -46,14 +46,14 @@ async def upload_vulnerabilities(
         print("OPEN AI RESP", open_api_json)
 
         # Save uploaded JSON file for record keeping
-        with open(os.path.join(UPLOAD_DIR, f"{(ollama_json['cve_id'] or ollama_json['cve_id'])}.json"), 'w') as f:
+        with open(os.path.join(UPLOAD_DIR, f"{(ollama_json.get('cve_id') or open_api_json.get('cve_id'))}.json"), 'w') as f:
             json.dump(vuln_data_raw, f, indent=4)
 
         vuln = Vulnerability(
-            title=(ollama_json['title'] or ollama_json['title']),
-            description=(ollama_json['description'] or ollama_json['description']),
-            severity=(ollama_json['severity'] or ollama_json['severity']),
-            cve_id=(ollama_json['cve_id'] or ollama_json['cve_id']),
+            title=(ollama_json.get('title') or open_api_json.get('title')),
+            description=(ollama_json.get('description') or open_api_json.get('description')),
+            severity=(ollama_json.get('severity') or open_api_json.get('severity')),
+            cve_id=(ollama_json.get('cve_id') or open_api_json.get('cve_id')),
             ai_assessment=assessment_str,
             ai_ollama_assessment=ollama_str['response'],
             date_reported=datetime.utcnow()

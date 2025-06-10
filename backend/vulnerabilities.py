@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, asc
 from typing import List, Optional
 import schemas
 from database import get_db
@@ -10,7 +11,7 @@ router = APIRouter()
 @router.get("/", response_model=List[schemas.Vulnerability])
 def get_vulnerabilities(db: Session = Depends(get_db)) -> List[schemas.Vulnerability]:
     """Retrieve all vulnerabilities."""
-    return db.query(Vulnerability).all()
+    return db.query(Vulnerability).order_by(asc(Vulnerability.severity), desc(Vulnerability.date_reported)).all()
 
 @router.get("/{vuln_id}", response_model=schemas.Vulnerability)
 def get_vulnerability(vuln_id: int, db: Session = Depends(get_db)) -> schemas.Vulnerability:

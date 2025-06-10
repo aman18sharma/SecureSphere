@@ -1,5 +1,5 @@
 """AI Assessment using Ollama (via subprocess and HTTP API)."""
-import pdb
+import time
 import json
 import subprocess
 import logging
@@ -75,6 +75,7 @@ def api_ollama_ai(content, model="llama3.2:latest", timeout=600):
     }
 
     try:
+        t1 = time.perf_counter()
         response = requests.post(
             url,
             headers=headers,
@@ -86,6 +87,8 @@ def api_ollama_ai(content, model="llama3.2:latest", timeout=600):
         # Parse the response
         result = response.json()
         resp = extract_json_from_text(result.get("response", ""))
+        t2 = time.perf_counter() - t1
+        print("Ollma Llama3 time taken %s seconds", t2)
         return {
             "response": resp
         }

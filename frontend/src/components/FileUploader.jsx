@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { uploadVulnerabilities } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { uploadVulnerabilities, runOllamaAIAssessment } from "../services/api";
 
 const FileUploader = () => {
+  const navigate = useNavigate(); // ✅ Move hook to the top level
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [fileContent, setFileContent] = useState("");
-
-  // const handleFileChange = (e) => {
-  //   setFile(e.target.files[0]);
-  // };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -33,6 +31,7 @@ const FileUploader = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!file) {
       setError("Please select a file");
       return;
@@ -45,15 +44,21 @@ const FileUploader = () => {
     try {
       const result = await uploadVulnerabilities(file);
       console.log(result);
-      setMessage(result.message);
+      setMessage(result?.message + " Ollama Llama3 assessment in progress.");
+
+      if (result?.message?.toLowerCase().includes("vulnerability already exists")) {
+        console.log("Vulnerability already exists");
+        navigate(`/vulnerability/${result?.ids[0]}`);
+      } else {
+        // runOllamaAIAssessment(result?.ids[0]);
+      }
     } catch (err) {
       setError("Failed to upload file. Please check the format.");
       console.error("Upload error:", err);
     } finally {
       setUploading(false);
     }
-  };
-
+  }
   return (
     <div className="file-uploader">
       <h2>Upload Vulnerability JSON</h2>
@@ -85,21 +90,6 @@ const FileUploader = () => {
           <pre>{fileContent}</pre>
         </div>
       )}
-
-      <div className="format-info">
-        <h4>Expected JSON Format:</h4>
-        <pre>
-          {`[
-  {
-    "title": "SQL Injection",
-    "description": "Vulnerability allows SQL injection...",
-    "severity": "High",
-    "cve_id": "CVE-2023-12345"
-  },
-  ...
-]`}
-        </pre>
-      </div>
     </div>
   );
 };
