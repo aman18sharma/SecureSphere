@@ -4,8 +4,8 @@ import json
 import subprocess
 import logging
 import requests
-from services.json_to_text import extract_json_from_text
 from prompt import prompt_string, response_format_json, ollama_prompt
+from .json_to_text import extract_json_from_text
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
