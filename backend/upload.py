@@ -1,12 +1,14 @@
+import os
+import json
+import pdb
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
-import json
 from datetime import datetime
 from database import get_db
 from models import Vulnerability
-from vulnerabilities import get_by_cve_id_vulnerability
 from ai_assessor import generate_ai_assessment
-import os
+from vulnerabilities import get_by_cve_id_vulnerability
+from services.llama import api_ollama_ai, subprocess_ollama_ai
 
 router = APIRouter()
 
@@ -21,6 +23,7 @@ async def upload_vulnerabilities(
     db: Session = Depends(get_db)
 ):
     try:
+        print("FILE:", file)
         contents = await file.read()
         vuln_data_raw = json.loads(contents)
 
@@ -35,25 +38,24 @@ async def upload_vulnerabilities(
                 "ids": [str(existing_vuln.id)]
             }
 
-        vuln_data = {
-            'title': vuln_data_raw['containers']['cna']['title'],
-            'description': vuln_data_raw['containers']['cna']['descriptions'][0]['value'],
-            'cve_id': cve_id
-        }
-
-        assessment_str = generate_ai_assessment(vuln_data)
-        assessment_json = json.loads(assessment_str)
+        assessment_str = generate_ai_assessment(vuln_data_raw)
+        ollama_str = api_ollama_ai(vuln_data_raw)
+        ollama_json = json.loads(ollama_str['response'])
+        open_api_json = json.loads(assessment_str)
+        print("OLLAMA RESP", ollama_json)
+        print("OPEN AI RESP", open_api_json)
 
         # Save uploaded JSON file for record keeping
-        with open(os.path.join(UPLOAD_DIR, f"{cve_id}.json"), 'w') as f:
+        with open(os.path.join(UPLOAD_DIR, f"{(ollama_json.get('cve_id') or open_api_json.get('cve_id'))}.json"), 'w') as f:
             json.dump(vuln_data_raw, f, indent=4)
 
         vuln = Vulnerability(
-            title=vuln_data['title'],
-            description=vuln_data['description'],
-            severity=assessment_json.get('complex_findings', {}).get('Severity', 'Unknown'),
-            cve_id=cve_id,
+            title=(ollama_json.get('title') or open_api_json.get('title')),
+            description=(ollama_json.get('description') or open_api_json.get('description')),
+            severity=(ollama_json.get('severity') or open_api_json.get('severity')),
+            cve_id=(ollama_json.get('cve_id') or open_api_json.get('cve_id')),
             ai_assessment=assessment_str,
+            ai_ollama_assessment=ollama_str['response'],
             date_reported=datetime.utcnow()
         )
         db.add(vuln)
